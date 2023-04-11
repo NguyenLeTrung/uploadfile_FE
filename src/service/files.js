@@ -22,9 +22,30 @@ const request = (options) => {
 
 
 
+const requestGet = (options) => {
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+    });
+
+    const defaults = {headers: headers};
+    options = Object.assign({}, defaults, options);
+    return fetch(options.url, options)
+    .then(response => 
+        response.json().then(json => {
+            if (!response.ok) {
+                return Promise.reject(json);
+            }
+
+            return json;
+        })
+    );
+};
+
+
+
 //  Lấy danh sách các file;
 export function getListFiles(id) {
-    return request({
+    return requestGet({
         url: API_URL + "list-file/" + id,
         method: 'GET'
     });
@@ -33,15 +54,21 @@ export function getListFiles(id) {
 
 //  Tại file mới;
 export function saveFile(file, userId) {
-    var raw = JSON.stringify({
-        file: file,
-        user: userId
-    })
+
+    // var raw = JSON.stringify({
+    //     file: file,
+    //     user: userId
+    // })
+    console.log(file);
+    let formData = new FormData();
+    formData.append("file", file.name);
+    formData.append("user", userId);
+    console.log(formData);
 
     return request({
         url: API_URL + "upload",
         method: 'POST',
-        body: raw,
+        body: formData,
         redirect: 'follow'
     });
 }

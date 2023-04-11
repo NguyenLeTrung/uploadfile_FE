@@ -8,13 +8,14 @@ function Upload() {
         getData();
     }, [])
 
-    function getData() {
+    const getData = () => {
         const users = JSON.parse(localStorage.getItem('usertoken'))
+        console.log(users);
         if (users) {
             let promise;
-            promise = getListFiles(users[0].id);
-            promise
+             getListFiles(1)
                 .then(response => {
+                    console.log(response);
                     setFiles(response);
                 }).catch(error => {
                     console.log(error);
@@ -25,6 +26,7 @@ function Upload() {
     }
 
     const [files, setFiles] = useState([]);
+    const [filename, setFilename] = useState('')
 
     function deleteFiles(id) {
         deleteFile(id)
@@ -38,15 +40,17 @@ function Upload() {
             })
     }
 
-    function createFile(files) {
+    function createFile() {
         const users = JSON.parse(localStorage.getItem('usertoken'));
-        saveFile(files.file, users[0].id)
+        console.log(filename)
+        saveFile(filename, users[0].id)
             .then(response => {
-                getData();
+                // getData();
             })
             .catch(error => {
                 console.log(error);
-            }).finally(getData());
+            })
+            // .finally(getData());
     }
 
     return (
@@ -56,13 +60,13 @@ function Upload() {
                     <div className="col-md-4">
                         <h2 className="alert alert-success">File Upload Section</h2>
 
-                        <form onSubmit={createFile}>
+                        <form >
                             <div className="form-group">
                                 <label htmlFor="exampleFormControlFile1" className="float-left">Browse A File To Upload</label>
-                                <input type="file" className="form-control" />
+                                <input type="file" className="form-control" onChange={e => setFilename(e.target.files[0])} />
                             </div>
 
-                            <button type="button" className="btn btn-primary float-left mt-2">Submit</button>
+                            <button type="button" className="btn btn-primary float-left mt-2" onClick={createFile}>Submit</button>
                             <br />
                             <br />
                         </form>
@@ -78,14 +82,16 @@ function Upload() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td></td>
-                            <td><a href="" target="_blank"></a>
-                                <button className="btn btn-success">DownLoad</button>
-                                {" "}
-                                <button className="btn btn-danger">Delete</button>
-                            </td>
-                        </tr>
+                        {files.map((f) => (
+                            <tr key={f.id}>
+                                <td>{f.file.substr(f.file.lastIndexOf("/") + 1, f.file.length -1)}</td>
+                                <td><a href="" target="_blank"></a>
+                                    <button className="btn btn-success">DownLoad</button>
+                                    {" "}
+                                    <button className="btn btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>
