@@ -9,7 +9,7 @@ const request = (options) => {
 
     if(token){
         headers.append("Authorization", 
-        "Bearer " + token);
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiMTIzMzUzMiIsImF2YXRhciI6bnVsbCwiZW1haWwiOiJ0cjEyNEBnbWFpbC5jb20iLCJwaG9uZSI6bnVsbCwic2VydmljZSI6InVzZXIiLCJpZCI6NiwiaWF0IjoxNjgxMzk1OTk1LCJleHAiOjE2ODEzOTk1OTV9.UoM8pkQ5kpwsSczLq50F7b7h6kiNWK5bFdr_s40hXec");
     }
     const defaults = {headers: headers};
     options = Object.assign({}, defaults, options);
