@@ -5,31 +5,54 @@ const request = (options) => {
         'Content-Type': 'application/json',
     });
 
-    const token = JSON.stringify(localStorage.getItem('accesstoken'));
+    const token = localStorage.getItem('accesstoken');
 
-    if(token){
-        headers.append("Authorization", 
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiMTIzMzUzMiIsImF2YXRhciI6bnVsbCwiZW1haWwiOiJ0cjEyNEBnbWFpbC5jb20iLCJwaG9uZSI6bnVsbCwic2VydmljZSI6InVzZXIiLCJpZCI6NiwiaWF0IjoxNjgxMzk1OTk1LCJleHAiOjE2ODEzOTk1OTV9.UoM8pkQ5kpwsSczLq50F7b7h6kiNWK5bFdr_s40hXec");
+    if (token) {
+        headers.append("Authorization",
+            "Bearer " + token);
     }
-    const defaults = {headers: headers};
+    const defaults = { headers: headers };
     options = Object.assign({}, defaults, options);
     return fetch(options.url, options)
-    .then(response => 
-        response.json().then(json => {
-            if (!response.ok) {
-                return Promise.reject(json);
-            }
+        .then(response =>
+            response.json().then(json => {
+                if (!response.ok) {
+                    return Promise.reject(json);
+                }
 
-            return json;
-        })
-    );
+                return json;
+            })
+        );
 };
 
 
+const requestUploadFile = (options) => {
+    const headers = new Headers();
+
+    const token = localStorage.getItem('accesstoken');
+
+    if (token) {
+        headers.append("Authorization",
+            "Bearer " + token);
+    }
+    const defaults = { headers: headers };
+    options = Object.assign({}, defaults, options);
+    return fetch(options.url, options)
+        .then(response =>
+            response.json().then(json => {
+                if (!response.ok) {
+                    return Promise.reject(json);
+                }
+
+                return json;
+            })
+        );
+};
+
 // Lấy tất cả folder và file đã được tạo
-export function getListpath() {
+export function getListpath(path) {
     var raw = JSON.stringify({
-        "path": ""
+        "path": path
     })
 
     return request({
@@ -52,6 +75,20 @@ export function createFolder(name, path) {
         url: API_URL + 'paths/create',
         method: 'POST',
         body: raw,
+        redirect: 'follow'
+    });
+}
+
+// Upload file
+export function uploadFile(file, path) {
+    var formData = new FormData();
+    formData.append("file", file);
+    formData.append("path", path);
+
+    return requestUploadFile({
+        url: API_URL + 'images/upload-single?path=' + path,
+        method: 'POST',
+        body: formData,
         redirect: 'follow'
     });
 }
