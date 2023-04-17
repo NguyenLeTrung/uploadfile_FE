@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { createFolder, getListpath } from '../../service/files';
+import { createFolder, getListpath, uploadFile } from '../../service/files';
+import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 export default function SubFolder() {
@@ -9,9 +10,15 @@ export default function SubFolder() {
 
     const [folder, setFolder] = useState([])
     const [subFolderName, setSubFolderName] = useState([])
+    const [fileUpload, setFileUpload] = useState()
+    const [paths, setPaths] = useState('')
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
+    const navigate = useNavigate()
+    const [showUpload, setShowUpload] = useState(false)
+    const handleClosePopupUpload = () => setShowUpload(false)
+    const handleShowPopupUpload = () => setShowUpload(true)
 
     useEffect(() => {
         getSubFolder();
@@ -38,8 +45,14 @@ export default function SubFolder() {
 
     }
 
-    const uploadFile = () => {
-
+    const uploadFiles = () => {
+        uploadFile(fileUpload.subFolderName, paths.nameFolder)
+        .then(response => {
+            getSubFolder();
+        })
+        .catch(error => {
+            console.log(error);
+        }).finally(getSubFolder());
     }
 
     const subFolder = (f) => {
@@ -50,12 +63,16 @@ export default function SubFolder() {
         setSubFolderName(event.target.value)
     }
 
+    const goBack = () => {
+        navigate('/upload')
+    }
+
     return (
         <div className='container mt-5'>
             {/* Header */}
-            <div className="row col-md-12">
+            <div className="row col-md-12">             
                 <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
-                <button className='btn btn-danger' style={{ marginLeft: '5px' }} onClick={() => uploadFile() }>Update File</button>
+                <button className='btn btn-danger' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload() }>Update File</button>
             </div>
             <table className="table bordered mt-4" >
                 <thead>
@@ -73,6 +90,10 @@ export default function SubFolder() {
                     ))}
                 </tbody>
             </table>
+            <div className='row col-md-auto'>
+                <button className='btn btn-primary' style={{ marginRight: '5px' }} onClick={() => goBack()}>
+                <i className="fa-solid fa-arrow-left"></i> Back</button>
+            </div>
             <Modal show={show} onHide={handleClose} animation={false}>
                 <Modal.Header>
                     <Modal.Title>Create Folder</Modal.Title>
@@ -89,6 +110,25 @@ export default function SubFolder() {
                     </Button>
                     <Button variant="secondary" onClick={() => handleClose()}>
                         <i></i>Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showUpload} onHide={handleClosePopupUpload} animation={true}>
+                <Modal.Header>
+                    <Modal.Title>Upload File</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='form-group'>
+                        <label>File</label>
+                        <input type='file' onChange={e => setFileUpload(e.target.files[0])} className='form-control' />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant='primary' onClick={() => uploadFiles()}>
+                        Upload
+                    </Button>
+                    <Button variant='secondary' onClick={() => handleClosePopupUpload()}>
+                        <i></i>Cancel
                     </Button>
                 </Modal.Footer>
             </Modal>

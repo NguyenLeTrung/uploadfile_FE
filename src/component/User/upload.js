@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createFolder, getListpath } from '../../service/files';
+import { createFolder, getListpath, uploadFile, updatefolder } from '../../service/files';
 import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -9,6 +9,7 @@ export default function BasicList() {
     const [name, setName] = useState([])
     const [nameFolder, setNameFolder] = useState()
     const [fileUpload, setFileUpload] = useState()
+    const [paths, setPaths] = useState()
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
@@ -42,8 +43,29 @@ export default function BasicList() {
         }
     }
 
-    const uploadFile = () => {
-        console.log(fileUpload)
+    const updateFolders = () => {
+        if (nameFolder !== null && nameFolder !== undefined) {
+            updatefolder(nameFolder, '').then(response => {
+                setShow(false);
+                getData();
+            }).catch(error => {
+                console.log(error);
+            })
+            
+        }
+    }
+
+    const uploadFiles = () => {
+        const users = JSON.parse(localStorage.getItem('usertoken'))
+        console.log(users)
+        uploadFile(fileUpload.name, '')
+        .then(response => {
+            getData();
+            console.log(fileUpload.name);
+        })
+        .catch(error => {
+            console.log(error);
+        }).finally(getData());
     }
 
     const subFolder = (f) => {
@@ -52,15 +74,14 @@ export default function BasicList() {
 
     const changeNameFolder = (event) => {
         setNameFolder(event.target.value)
-        console.log(nameFolder);
     }
 
     return (
         <div className='container'>
             <h2>Folder</h2>
-            <div className="row col-md-12">
+            <div className="row col-md-auto">
                 <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
-                <button className='btn btn-danger' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload()}>Update File</button>
+                <button className='btn btn-danger' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload()}>Upload File</button>
             </div>
             <table className="table bordered mt-4">
                 <thead>
@@ -73,11 +94,22 @@ export default function BasicList() {
                     {name.map((f, index) => (
                         <tr key={f.id}>
                             <td scope='row'>{index + 1}</td>
-                            <td scope='row' onDoubleClick={() => subFolder(f)}><i className='fa-regular fa-folder'></i> {f.name}</td>
+                            <td scope='row' 
+                                onDoubleClick={() => subFolder(f)} 
+                                style={{ cursor: 'pointer' }}
+                                // onClick={() => handleShow()}
+                            >
+                                <i className='fa-regular fa-folder'></i> 
+                                {" "}{f.name}
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            <div className='row col-md-auto'>
+                <button className='btn btn-primary' style={{ marginRight: '5px' }} onClick={() => window.history.back()}>
+                <i className="fa-solid fa-arrow-left"></i> Back</button>
+            </div>
             <Modal show={show} onHide={handleClose} animation={false}>
                 <Modal.Header>
                     <Modal.Title>Create Folder</Modal.Title>
@@ -97,6 +129,25 @@ export default function BasicList() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <Modal show={show} onHide={handleClose} animation={false}>
+                <Modal.Header>
+                    <Modal.Title>Update Folder</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='form-group'>
+                        <label>Name Folder</label>
+                        <input type='text' className='form-control' style={{ textAlign: 'left' }} name='nameFolder' id='nameFolder' onChange={changeNameFolder} />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant='primary' onClick={() => updateFolders()}>
+                        Update
+                    </Button>
+                    <Button variant='secondary' onClick={() => handleClose()}>
+                        <i></i> Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Modal show={showUpload} onHide={handleClosePopupUpload} animation={true}>
                 <Modal.Header>
                     <Modal.Title>Upload File</Modal.Title>
@@ -108,7 +159,7 @@ export default function BasicList() {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={() => uploadFile()}>
+                    <Button variant="primary" onClick={() => uploadFiles()}>
                         Upload
                     </Button>
                     <Button variant="secondary" onClick={() => handleClosePopupUpload()}>

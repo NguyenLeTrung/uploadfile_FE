@@ -79,14 +79,32 @@ export function createFolder(name, path) {
     });
 }
 
+
+// Update folder
+export function updatefolder(name, path) {
+    var raw = JSON.stringify({
+        name: name,
+        path: path,
+    })
+
+    return request({
+        url: API_URL + 'paths/update',
+        method: 'PUT',
+        body: raw,
+        redirect: 'follow'
+    })
+}
+
+
 // Upload file
 export function uploadFile(file, path) {
+    let users = JSON.parse(localStorage.getItem('usertoken'))
     var formData = new FormData();
     formData.append("file", file);
     formData.append("path", path);
 
     return requestUploadFile({
-        url: API_URL + 'images/upload-single?path=' + path,
+        url: API_URL + 'images/upload-single?path=' + users.id + '/' + path,
         method: 'POST',
         body: formData,
         redirect: 'follow'
