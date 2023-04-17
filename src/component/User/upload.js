@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createFolder, getListpath, uploadFile, updatefolder } from '../../service/files';
+import { createFolder, getListpath, uploadFile, updatefolder, deleteFolder } from '../../service/files';
 import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -16,6 +16,13 @@ export default function BasicList() {
     const [showUpload, setShowUpload] = useState(false)
     const handleClosePopupUpload = () => setShowUpload(false)
     const handleShowPopupUpload = () => setShowUpload(true)
+
+    const handleShowUpdate = (f) => {
+        console.log(f.name)
+        setNameFolder(f.name)
+        console.log(nameFolder)
+        setShow(true)
+    }
 
     const getData = () => {
         let promise;
@@ -51,29 +58,46 @@ export default function BasicList() {
             }).catch(error => {
                 console.log(error);
             })
-            
+
         }
     }
 
     const uploadFiles = () => {
-        const users = JSON.parse(localStorage.getItem('usertoken'))
-        console.log(users)
-        uploadFile(fileUpload.name, '')
-        .then(response => {
-            getData();
-            console.log(fileUpload.name);
-        })
-        .catch(error => {
-            console.log(error);
-        }).finally(getData());
+        uploadFile(fileUpload, '')
+            .then(response => {
+                setShowUpload(false);
+                getData();
+            })
+            .catch(error => {
+                console.log(error);
+            }).finally(getData());
     }
 
     const subFolder = (f) => {
-        window.location.replace('/sub_folder/' + f.name)
+        if (f.isFolder)
+            window.location.replace('/sub_folder/' + f.name)
+        else
+            window.open(f.path)
     }
 
     const changeNameFolder = (event) => {
         setNameFolder(event.target.value)
+    }
+
+
+    const deleteFolderFile = (file) => {
+        deleteFolder(file.name)
+            .then(response => {
+                getData();
+            })
+            .catch(error => {
+                console.log(error);
+            }).finally(getData());
+    }
+
+
+    const updateName = () => {
+
     }
 
     return (
@@ -88,19 +112,26 @@ export default function BasicList() {
                     <tr>
                         <th scope='col'>ID</th>
                         <th scope='col-2'>Name</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {name.map((f, index) => (
                         <tr key={f.id}>
                             <td scope='row'>{index + 1}</td>
-                            <td scope='row' 
-                                onDoubleClick={() => subFolder(f)} 
+                            <td scope='row'
+                                onDoubleClick={() => subFolder(f)}
                                 style={{ cursor: 'pointer' }}
-                                // onClick={() => handleShow()}
                             >
-                                <i className='fa-regular fa-folder'></i> 
+                                {f.isFolder === true ? <i className='fa-regular fa-folder'></i> : <i className='fa fa-paperclip'></i>}
                                 {" "}{f.name}
+                            </td>
+                            <td>
+                                {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue' }} onClick={() => handleShowUpdate(f)}></i> : ''}
+                            </td>
+                            <td>
+                                {f.isFolder === false ? <i className='fa fa-trash' style={{ color: 'red' }} onClick={() => deleteFolderFile(f)}></i> : ''}
                             </td>
                         </tr>
                     ))}
@@ -108,7 +139,7 @@ export default function BasicList() {
             </table>
             <div className='row col-md-auto'>
                 <button className='btn btn-primary' style={{ marginRight: '5px' }} onClick={() => window.history.back()}>
-                <i className="fa-solid fa-arrow-left"></i> Back</button>
+                    <i className="fa-solid fa-arrow-left"></i> Back</button>
             </div>
             <Modal show={show} onHide={handleClose} animation={false}>
                 <Modal.Header>
@@ -117,7 +148,7 @@ export default function BasicList() {
                 <Modal.Body>
                     <div className="form-group">
                         <label>Name Folder</label>
-                        <input type="text" className="form-control" style={{ textAlign: 'left' }} name="nameFolder" id='nameFolder' onChange={changeNameFolder} />
+                        <input type="text" className="form-control" style={{ textAlign: 'left' }} name="nameFolder" id='nameFolder' onChange={changeNameFolder} value={nameFolder} />
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

@@ -46,9 +46,13 @@ export default function SubFolder() {
     }
 
     const uploadFiles = () => {
-        uploadFile(fileUpload.subFolderName, paths.nameFolder)
+        let users = JSON.parse(localStorage.getItem('usertoken'))
+        const a = window.location.pathname;
+        const path = a.substring(12, a.length)
+        uploadFile(fileUpload, path)
         .then(response => {
             getSubFolder();
+            setShowUpload(false)
         })
         .catch(error => {
             console.log(error);

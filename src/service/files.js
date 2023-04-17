@@ -101,12 +101,46 @@ export function uploadFile(file, path) {
     let users = JSON.parse(localStorage.getItem('usertoken'))
     var formData = new FormData();
     formData.append("file", file);
-    formData.append("path", path);
+    console.log(path);
+    var url;
+    if (path === '')
+        url = API_URL + 'images/upload-single?path=' + users.id
+    else
+        url = API_URL + 'images/upload-single?path=' + users.id + '/' + path
 
     return requestUploadFile({
-        url: API_URL + 'images/upload-single?path=' + users.id + '/' + path,
+        url: url,
         method: 'POST',
         body: formData,
+        redirect: 'follow'
+    });
+}
+
+// delete
+export function deleteFolder(path) {
+    var raw = JSON.stringify({
+        path: path
+    })
+
+    return request({
+        url: API_URL + 'paths/delete',
+        method: 'PATCH',
+        body: raw,
+        redirect: 'follow'
+    });
+}
+
+// update
+export function updateFolder(oldPath, newPath) {
+    var raw = JSON.stringify({
+        oldPath: oldPath,
+        newPath: newPath
+    })
+
+    return request({
+        url: API_URL + 'paths/update',
+        method: 'PUT',
+        body: raw,
         redirect: 'follow'
     });
 }
