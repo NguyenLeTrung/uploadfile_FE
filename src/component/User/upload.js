@@ -11,7 +11,6 @@ export default function Upload() {
     const [oldNameFolder, setOldNameFolder] = useState()    
     const [fileUpload, setFileUpload] = useState()
     const [paths, setPaths] = useState()
-    const [newFolder, setNewFolder] = useState()
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
@@ -20,7 +19,7 @@ export default function Upload() {
     const handleShowPopupUpload = () => setShowUpload(true)
 
     const handleShowUpdate = (f) => {
-        console.log(f.name)
+        setOldNameFolder(f.name)
         setNameFolder(f.name)
         setShow(true)
     }
@@ -54,7 +53,7 @@ export default function Upload() {
     const updateFolders = () => {
         if (nameFolder !== null && nameFolder !== undefined) {
             updateFolder(oldNameFolder, nameFolder).then(response => {
-                setOldNameFolder(response.data)
+                setOldNameFolder(response)
                 console.log(nameFolder)
                 setShow(false);
                 getData();
@@ -98,24 +97,19 @@ export default function Upload() {
             }).finally(getData());
     }
 
-
-    const updateName = () => {
-
-    }
-
     return (
         <div className='container'>
             <h2>Folder</h2>
             <div className="row col-md-auto">
                 <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
-                <button className='btn btn-danger' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload()}>Upload File</button>
+                <button className='btn btn-secondary' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload()}>Upload File</button>
+                <button className='btn btn-danger' style={{ marginLeft: '5px' }}><i className='fa fa-remove'></i> Delete File</button>
             </div>
             <table className="table bordered mt-4">
                 <thead>
                     <tr>
                         <th scope='col'>ID</th>
                         <th scope='col-2'>Name</th>
-                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -133,9 +127,9 @@ export default function Upload() {
                             <td>
                                 {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleShowUpdate(f)}></i> : ''}
                             </td>
-                            <td>
+                            {/* <td>
                                 {f.isFolder === false ? <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => deleteFolderFile(f)}></i> : ''}
-                            </td>
+                            </td> */}
                         </tr>
                     ))}
                 </tbody>
@@ -170,7 +164,7 @@ export default function Upload() {
                 <Modal.Body>
                     <div className='form-group'>
                         <label>Name Folder</label>
-                        <input type='text' className='form-control' style={{ textAlign: 'left' }} name='nameFolder' id='nameFolder' onChange={changeNameFolder} />
+                        <input type='text' className='form-control' style={{ textAlign: 'left' }} value={nameFolder} name='nameFolder' id='nameFolder' onChange={changeNameFolder} />
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { createFolder, deleteFolder, getListpath, uploadFile } from '../../service/files';
+import { createFolder, deleteFolder, getListpath, updateFolder, uploadFile } from '../../service/files';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -10,6 +10,7 @@ export default function SubFolder() {
 
     const [folder, setFolder] = useState([])
     const [subFolderName, setSubFolderName] = useState([])
+    const [oldNameFolder, setOldNameFolder] = useState([])
     const [fileUpload, setFileUpload] = useState()
     const [paths, setPaths] = useState('')
     const [show, setShow] = useState(false)
@@ -22,12 +23,13 @@ export default function SubFolder() {
 
     const handleShowUpdate = (f) => {
         console.log(f.name)
+        setOldNameFolder(f.name)
         setSubFolderName(f.name)
         console.log(subFolderName)
         setShow(true)
     }
 
-    
+
     const getSubFolder = () => {
         getListpath('/' + nameFolder.name)
             .then(response => {
@@ -52,6 +54,20 @@ export default function SubFolder() {
             })
         }
 
+    }
+
+    const updateSubFolder = () => {
+        if(subFolderName !== null && subFolderName !== undefined) {
+            updateFolder(subFolderName + '/' + oldNameFolder, nameFolder.name + '/' + subFolderName)
+            .then(response => {
+                setOldNameFolder()
+                console.log(subFolderName)
+                setShow(false);
+                getSubFolder();
+            }).catch(error => {
+                console.log(error);
+            })
+        }
     }
 
     const uploadFiles = () => {
@@ -95,14 +111,14 @@ export default function SubFolder() {
             {/* Header */}
             <div className="row col-md-12">             
                 <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
-                <button className='btn btn-danger' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload() }>Upload File</button>
+                <button className='btn btn-secondary' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload() }>Upload File</button>
+                <button className='btn btn-danger' style={{ marginLeft: '5px'}}><i className='fa fa-remove'></i> Delete</button>
             </div>
             <table className="table bordered mt-4" >
                 <thead>
                     <tr>
                         <th scope='col'>ID</th>
                         <th scope='col-2'>Name</th>
-                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -119,9 +135,6 @@ export default function SubFolder() {
                             </td>
                             <td>
                                 {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue'}} onClick={() => handleShowUpdate(f)}></i> : ''}
-                            </td>
-                            <td>
-                                {f.isFolder === false ? <i className='fa fa-trash' style={{ color: 'red'}} onClick={() => deleteSubFolderFile(f)}></i> : ''}
                             </td>
                         </tr>
                     ))}
@@ -147,6 +160,25 @@ export default function SubFolder() {
                     </Button>
                     <Button variant="secondary" onClick={() => handleClose()}>
                         <i></i>Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={show} onHide={handleClose} animation={false}>
+                <Modal.Header>
+                    <Modal.Title>Update Folder</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='form-group'>
+                        <label>Name Folder</label>
+                        <input type='text' className='form-control' style={{ textAlign: 'left' }} value={subFolderName} name='nameFolder' id='nameFolder' onChange={changeNameFolder} />
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant='primary' onClick={() => updateSubFolder()}>
+                        Update
+                    </Button>
+                    <Button variant='secondary' onClick={() => handleClose()}>
+                        <i></i> Close
                     </Button>
                 </Modal.Footer>
             </Modal>
