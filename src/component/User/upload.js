@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { createFolder, getListpath, uploadFile, updatefolder, deleteFolder } from '../../service/files';
+import { createFolder, getListpath, uploadFile, updateFolder, deleteFolder } from '../../service/files';
 import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
-export default function BasicList() {
+export default function Upload() {
 
     const [name, setName] = useState([])
     const [nameFolder, setNameFolder] = useState()
+    const [oldNameFolder, setOldNameFolder] = useState()    
     const [fileUpload, setFileUpload] = useState()
     const [paths, setPaths] = useState()
+    const [newFolder, setNewFolder] = useState()
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
@@ -20,7 +22,6 @@ export default function BasicList() {
     const handleShowUpdate = (f) => {
         console.log(f.name)
         setNameFolder(f.name)
-        console.log(nameFolder)
         setShow(true)
     }
 
@@ -52,7 +53,9 @@ export default function BasicList() {
 
     const updateFolders = () => {
         if (nameFolder !== null && nameFolder !== undefined) {
-            updatefolder(nameFolder, '').then(response => {
+            updateFolder(oldNameFolder, nameFolder).then(response => {
+                setOldNameFolder(response.data)
+                console.log(nameFolder)
                 setShow(false);
                 getData();
             }).catch(error => {
@@ -128,10 +131,10 @@ export default function BasicList() {
                                 {" "}{f.name}
                             </td>
                             <td>
-                                {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue' }} onClick={() => handleShowUpdate(f)}></i> : ''}
+                                {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleShowUpdate(f)}></i> : ''}
                             </td>
                             <td>
-                                {f.isFolder === false ? <i className='fa fa-trash' style={{ color: 'red' }} onClick={() => deleteFolderFile(f)}></i> : ''}
+                                {f.isFolder === false ? <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => deleteFolderFile(f)}></i> : ''}
                             </td>
                         </tr>
                     ))}

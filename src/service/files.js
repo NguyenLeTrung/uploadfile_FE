@@ -81,19 +81,19 @@ export function createFolder(name, path) {
 
 
 // Update folder
-export function updatefolder(name, path) {
-    var raw = JSON.stringify({
-        name: name,
-        path: path,
-    })
+// export function updatefolder(name, path) {
+//     var raw = JSON.stringify({
+//         name: name,
+//         path: path,
+//     })
 
-    return request({
-        url: API_URL + 'paths/update',
-        method: 'PUT',
-        body: raw,
-        redirect: 'follow'
-    })
-}
+//     return request({
+//         url: API_URL + 'paths/update',
+//         method: 'PUT',
+//         body: raw,
+//         redirect: 'follow'
+//     })
+// }
 
 
 // Upload file
@@ -132,15 +132,18 @@ export function deleteFolder(path) {
 
 // update
 export function updateFolder(oldPath, newPath) {
+    let users = JSON.parse(localStorage.getItem('usertoken'))
     var raw = JSON.stringify({
-        oldPath: oldPath,
-        newPath: newPath
+        oldPath: 'http://113.177.27.200:3010/' + users.id + '/' + oldPath,
+        newPath: 'http://113.177.27.200:3010/' + users.id + '/' + newPath,
     })
 
+    console.log(oldPath)
+    
     return request({
         url: API_URL + 'paths/update',
         method: 'PUT',
         body: raw,
-        redirect: 'follow'
+        redirect: 'follow',
     });
 }

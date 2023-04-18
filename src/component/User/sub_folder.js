@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { createFolder, getListpath, uploadFile } from '../../service/files';
+import { createFolder, deleteFolder, getListpath, uploadFile } from '../../service/files';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -20,10 +20,14 @@ export default function SubFolder() {
     const handleClosePopupUpload = () => setShowUpload(false)
     const handleShowPopupUpload = () => setShowUpload(true)
 
-    useEffect(() => {
-        getSubFolder();
-    }, [])
+    const handleShowUpdate = (f) => {
+        console.log(f.name)
+        setSubFolderName(f.name)
+        console.log(subFolderName)
+        setShow(true)
+    }
 
+    
     const getSubFolder = () => {
         getListpath('/' + nameFolder.name)
             .then(response => {
@@ -32,6 +36,11 @@ export default function SubFolder() {
                 console(error);
             })
     }
+
+    useEffect(() => {
+        getSubFolder();
+    }, [])
+
 
     const createSubFolder = () => {
         if (subFolderName !== null && subFolderName !== undefined) {
@@ -67,6 +76,16 @@ export default function SubFolder() {
         setSubFolderName(event.target.value)
     }
 
+    const deleteSubFolderFile = (file) => {
+        deleteFolder(file.name) 
+        .then(response => {
+            getSubFolder();
+        })
+        .catch(error => {
+            console.log(error);
+        }).finally(getSubFolder());
+    }
+
     const goBack = () => {
         navigate('/upload')
     }
@@ -76,20 +95,34 @@ export default function SubFolder() {
             {/* Header */}
             <div className="row col-md-12">             
                 <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
-                <button className='btn btn-danger' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload() }>Update File</button>
+                <button className='btn btn-danger' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload() }>Upload File</button>
             </div>
             <table className="table bordered mt-4" >
                 <thead>
                     <tr>
                         <th scope='col'>ID</th>
                         <th scope='col-2'>Name</th>
+                        <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {folder.map((f, index) => (
                         <tr key={f.id}>
                             <td scope='row'>{index + 1}</td>
-                            <td scope='row' onDoubleClick={() => subFolder(f)}><i className="fa-regular fa-folder"></i> {f.name}</td>
+                            <td scope='row' 
+                                onDoubleClick={() => subFolder(f)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                {f.isFolder === true ? <i className='fa-regular fafolder'></i> : <i className='fa fa-paperclip'></i>}
+                                {" "}{f.name}
+                            </td>
+                            <td>
+                                {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue'}} onClick={() => handleShowUpdate(f)}></i> : ''}
+                            </td>
+                            <td>
+                                {f.isFolder === false ? <i className='fa fa-trash' style={{ color: 'red'}} onClick={() => deleteSubFolderFile(f)}></i> : ''}
+                            </td>
                         </tr>
                     ))}
                 </tbody>
