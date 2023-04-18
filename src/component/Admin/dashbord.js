@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Modal } from 'react-bootstrap';
+import { getListAllUser, createUser, updateUser, getUserbyID, deleteUser } from '../../service/files';
 
 function UserManagement() {
 
+    const [users, setUsers] = useState()
+    const [listUser, setUserlist] = useState([])
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
@@ -11,6 +14,55 @@ function UserManagement() {
     const handleShowUpdate = () => {
         setShow(true)
     }
+
+    const getData = () => {
+        let promise;
+        promise = getListAllUser()
+        promise
+            .then(response => {
+                setUserlist(response.data)
+                console.log(response.data)
+            }).catch(error => {
+                console.log(error);
+            })
+    }
+
+    useEffect(() => {
+        getData();
+    }, [])
+
+    const createUsers = () => {
+        if (users !== null &&  users !== undefined) {
+            createUser(users)
+            .then(response => {
+                setShow(false)
+                getData();
+            }).catch(error => {
+                console.log(error)
+            })
+        }
+    }
+
+    const updateUsers = () => {
+        if (users !== null && users !== undefined) {
+            updateUser(users)
+            .then(response => {
+                setShow(false);
+                getData();
+            }).catch(error => {
+                console.log(error);
+            })
+        }
+    }
+
+    const deleteUsers = (usernames) => {
+        deleteUser(usernames)
+        .then(response => {
+            getData();
+        }).catch(error => {
+            console.log(error);
+        })
+    } 
 
   return (
     <>
@@ -30,22 +82,16 @@ function UserManagement() {
                         <th>Delete</th>
                     </tr>
                 </thead>
-
                 <tbody>
-                    <tr>
-                        <td scope='row'>1</td>
-                        <td scope='row-2'>1233532</td>
-                        <td scope='row'>test@gmail.com</td>
-                        <td><i className='fa fa-edit' style={{ color: 'blue'}}></i></td>
-                        <td><i className='fa fa-trash' style={{ color: 'red'}}></i></td>
-                    </tr>
-                    <tr>
-                        <td scope='row'>2</td>
-                        <td scope='row'>1233532</td>
-                        <td scope='row'>tr124@gmail.com</td>
-                        <td><i className='fa fa-edit' style={{ color: 'blue'}}></i></td>
-                        <td><i className='fa fa-trash' style={{ color: 'red'}}></i></td>
-                    </tr>
+                    {listUser.map((u, index) => {
+                        <tr key={u.id}>
+                            <td scope='row'>{index + 1}</td>
+                            <td scope='row'>{u.name}</td>
+                            <td scope='row'>{u.email}</td>
+                            <td><i className='fa fa-plus'></i></td>
+                            <td><i className='fa fa-remove'></i></td>
+                        </tr>
+                    })}
                 </tbody>
             </table>
        </div>
@@ -57,19 +103,19 @@ function UserManagement() {
             <Modal.Body>
                 <div className="form-group">
                     <label>Username</label>
-                    <input type="text" className="form-control" style={{ textAlign: 'left' }} />
+                    <input type="text" className="form-control" style={{ textAlign: 'left', boxSizing: 'unset' }} placeholder='username'/>
                 </div>
                 <div className="form-group">
                     <label>Email</label>
-                    <input type="email" className="form-control" style={{ textAlign: 'left', boxSizing: 'unset' }}/>
+                    <input type="email" className="form-control" style={{ textAlign: 'left', boxSizing: 'unset' }} placeholder='email'/>
                 </div>
                 <div className="form-group">
                     <label>Password</label>
-                    <input type="text" className="form-control" style={{ textAlign: 'left' }} />
+                    <input type="password" className="form-control" style={{ textAlign: 'left', boxSizing: 'unset' }} placeholder='password'/>
                 </div>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="primary">
+                <Button variant="primary" onClick={() => createUsers()}>
                     Add
                 </Button>
                 <Button variant="secondary" onClick={() => handleClose()}>

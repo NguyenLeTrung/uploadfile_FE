@@ -58,7 +58,8 @@ export default function SubFolder() {
 
     const updateSubFolder = () => {
         if(subFolderName !== null && subFolderName !== undefined) {
-            updateFolder(subFolderName + '/' + oldNameFolder, nameFolder.name + '/' + subFolderName)
+            updateFolder(oldNameFolder + '/' + subFolderName, nameFolder.name + '/' + subFolderName)
+            console.log(oldNameFolder + '/' + subFolderName)
             .then(response => {
                 setOldNameFolder()
                 console.log(subFolderName)
@@ -163,7 +164,7 @@ export default function SubFolder() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Modal show={show} onHide={handleClose} animation={false}>
+            {/* <Modal show={show} onHide={handleClose} animation={false}>
                 <Modal.Header>
                     <Modal.Title>Update Folder</Modal.Title>
                 </Modal.Header>
@@ -181,7 +182,7 @@ export default function SubFolder() {
                         <i></i> Close
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal> */}
             <Modal show={showUpload} onHide={handleClosePopupUpload} animation={true}>
                 <Modal.Header>
                     <Modal.Title>Upload File</Modal.Title>

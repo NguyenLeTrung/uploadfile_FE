@@ -31,7 +31,7 @@ export default function Upload() {
             .then(response => {
                 setName(response.data)
             }).catch(error => {
-                console(error);
+                console.log(error);
             })
     }
 
@@ -88,7 +88,7 @@ export default function Upload() {
 
 
     const deleteFolderFile = (file) => {
-        deleteFolder(file.name)
+        deleteFolder(file.paths)
             .then(response => {
                 getData();
             })
@@ -103,7 +103,7 @@ export default function Upload() {
             <div className="row col-md-auto">
                 <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
                 <button className='btn btn-secondary' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload()}>Upload File</button>
-                <button className='btn btn-danger' style={{ marginLeft: '5px' }}><i className='fa fa-remove'></i> Delete File</button>
+                <button className='btn btn-danger' style={{ marginLeft: '5px' }}><i className='fa fa-remove' onClick={() => deleteFolderFile()}></i> Delete</button>
             </div>
             <table className="table bordered mt-4">
                 <thead>
@@ -127,9 +127,6 @@ export default function Upload() {
                             <td>
                                 {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleShowUpdate(f)}></i> : ''}
                             </td>
-                            {/* <td>
-                                {f.isFolder === false ? <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => deleteFolderFile(f)}></i> : ''}
-                            </td> */}
                         </tr>
                     ))}
                 </tbody>

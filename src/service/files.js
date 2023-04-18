@@ -1,5 +1,7 @@
 import { API_URL } from "./config";
 
+const API_URL_USER = API_URL + "users"
+
 const request = (options) => {
     const headers = new Headers({
         'Content-Type': 'application/json',
@@ -129,5 +131,67 @@ export function updateFolder(oldPath, newPath) {
         method: 'PUT',
         body: raw,
         redirect: 'follow',
+    });
+}
+
+
+// USER 
+
+// Hiển thị danh sách người dùng
+export function getListAllUser() {
+    return request({
+        url: API_URL_USER,
+        method: 'GET',
+        redirect: 'follow'
+    });
+}
+
+// Tạo mới tài khoản người dùng
+export function createUser(users) {
+    var raw = JSON.stringify({
+        "name": users.name,
+        "email": users.email,
+        "password": users.password
+    });
+
+    return request({
+        url: API_URL_USER,
+        method: 'POST',
+        body: raw,
+        redirect: 'follow'
+    });
+}
+
+// Hiển thị danh sách người dùng theo ID
+export function getUserbyID(user) {
+    return request({
+        url: API_URL_USER + '/' + user.id,
+        method: 'GET',
+        redirect: 'follow'
+    });
+}
+
+// Cập nhật thông tin người dùng
+export function updateUser(user) {
+    var raw = JSON.stringify({
+        'name': user.name,
+        'email': user.email
+    });
+
+    return request({
+        url: API_URL_USER + "/" + user.id,
+        method: 'PUT',
+        body: raw,
+        redirect: 'follow'
+    });
+}
+
+
+// Xóa thông tin tài khoản người dùng
+export function deleteUser(user) {
+    return request({
+        url: API_URL_USER + "/" + user.id,
+        method: 'DELETE',
+        redirect: 'follow'
     });
 }

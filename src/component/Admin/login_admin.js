@@ -3,7 +3,7 @@ import '../../access/main.css'
 import axios from "axios";
 
 
-function Login() {
+function LoginAdmin() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
@@ -19,12 +19,17 @@ function Login() {
             localStorage.setItem('accesstoken', response.data.data.token.access_token)
             localStorage.setItem('refreshtoken', response.data.data.token.refresh_token)
             localStorage.setItem('usertoken', JSON.stringify(response.data.data.user))
-            window.location.replace("http://localhost:3000/upload")
+
+        })
+        .catch(error => console.log(error));
+
+        const users = JSON.parse(localStorage.getItem("usertoken"))
+        if (users.service === 'staff') {
+            window.location.replace("http://localhost:3000/dashboard")
             setTimeout(function() {
                 window.location.reload();
             }, 1000)
-        })
-        .catch(error => console.log(error));
+        }
     }
 
     return (
@@ -56,4 +61,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default LoginAdmin;
