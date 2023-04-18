@@ -12,7 +12,7 @@ export default function SubFolder() {
     const [subFolderName, setSubFolderName] = useState([])
     const [oldNameFolder, setOldNameFolder] = useState([])
     const [fileUpload, setFileUpload] = useState()
-    const [paths, setPaths] = useState('')
+    const [paths, setPaths] = useState()
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
@@ -31,7 +31,10 @@ export default function SubFolder() {
 
 
     const getSubFolder = () => {
-        getListpath('/' + nameFolder.name)
+        const link = localStorage.getItem("path")
+        const path = link.substring((link.indexOf('/9/') + 2), link.length)
+        setPaths(path)
+        getListpath(path)
             .then(response => {
                 setFolder(response.data)
             }).catch(error => {
@@ -40,13 +43,15 @@ export default function SubFolder() {
     }
 
     useEffect(() => {
+        setPaths(localStorage.getItem("path"))
         getSubFolder();
     }, [])
 
 
     const createSubFolder = () => {
-        if (subFolderName !== null && subFolderName !== undefined) {
-            createFolder(subFolderName, '/' + nameFolder.name).then(response => {
+        console.log(paths)
+        if (paths) {
+            createFolder(subFolderName, paths).then(response => {
                 setShow(false);
                 getSubFolder();
             }).catch(error => {
@@ -58,7 +63,7 @@ export default function SubFolder() {
 
     const updateSubFolder = () => {
         if(subFolderName !== null && subFolderName !== undefined) {
-            updateFolder(nameFolder.name + '/' +oldNameFolder, nameFolder.name + '/' + subFolderName)
+            updateFolder(paths + '/' +oldNameFolder, paths + '/' + subFolderName)
             .then(response => {
                 setOldNameFolder()
                 setShowUpdate(false);
@@ -72,8 +77,8 @@ export default function SubFolder() {
     const uploadFiles = () => {
         let users = JSON.parse(localStorage.getItem('usertoken'))
         const a = window.location.pathname;
-        const path = a.substring(12, a.length)
-        uploadFile(fileUpload, path)
+        // const path = a.substring(12, a.length)
+        uploadFile(fileUpload, paths)
         .then(response => {
             getSubFolder();
             setShowUpload(false)
@@ -107,7 +112,14 @@ export default function SubFolder() {
     }
 
     const goBack = () => {
-        navigate('/upload')
+        const link = localStorage.getItem("path")
+        const path = link.substring(link.lastIndexOf('/'), -1)
+        const a= path.substring(path.lastIndexOf("/") + 1, path.length)
+        console.log(a);
+        localStorage.setItem("path", path)
+        window.location.replace('/sub_folder/' + a)
+        // navigate('/upload')
+        // history.goBack()
     }
 
     return (
