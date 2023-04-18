@@ -8,20 +8,25 @@ export default function Upload() {
 
     const [name, setName] = useState([])
     const [nameFolder, setNameFolder] = useState()
-    const [oldNameFolder, setOldNameFolder] = useState()    
+    const [oldNameFolder, setOldNameFolder] = useState()
     const [fileUpload, setFileUpload] = useState()
     const [paths, setPaths] = useState()
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
-    const handleShow = () => setShow(true)
+    const handleShow = () => {
+        setNameFolder('')
+        setShow(true)
+    }
     const [showUpload, setShowUpload] = useState(false)
     const handleClosePopupUpload = () => setShowUpload(false)
     const handleShowPopupUpload = () => setShowUpload(true)
 
+    const [showUpdate, setShowUpdate] = useState(false)
+    const handleCloseUpdate = () => setShowUpdate(false)
     const handleShowUpdate = (f) => {
         setOldNameFolder(f.name)
         setNameFolder(f.name)
-        setShow(true)
+        setShowUpdate(true)
     }
 
     const getData = () => {
@@ -54,8 +59,7 @@ export default function Upload() {
         if (nameFolder !== null && nameFolder !== undefined) {
             updateFolder(oldNameFolder, nameFolder).then(response => {
                 setOldNameFolder(response)
-                console.log(nameFolder)
-                setShow(false);
+                setShowUpdate(false);
                 getData();
             }).catch(error => {
                 console.log(error);
@@ -76,8 +80,10 @@ export default function Upload() {
     }
 
     const subFolder = (f) => {
-        if (f.isFolder)
+        if (f.isFolder) {
             window.location.replace('/sub_folder/' + f.name)
+            localStorage.setItem("path", f.path)
+        }
         else
             window.open(f.path)
     }
@@ -88,7 +94,7 @@ export default function Upload() {
 
 
     const deleteFolderFile = (file) => {
-        deleteFolder(file.paths)
+        deleteFolder(file.path)
             .then(response => {
                 getData();
             })
@@ -97,19 +103,29 @@ export default function Upload() {
             }).finally(getData());
     }
 
+    const logout = () => {
+        localStorage.clear()
+        window.location.replace('/')
+    }
+
     return (
         <div className='container'>
             <h2>Folder</h2>
             <div className="row col-md-auto">
-                <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
-                <button className='btn btn-secondary' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload()}>Upload File</button>
-                <button className='btn btn-danger' style={{ marginLeft: '5px' }}><i className='fa fa-remove' onClick={() => deleteFolderFile()}></i> Delete</button>
+                <div className='col-md-8'>
+                    <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
+                    <button className='btn btn-secondary' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload()}>Upload File</button>
+                </div>
+                <div className='col-md-4' style={{ textAlign: 'right' }}>
+                    <button className='btn'><i className='fa-solid fa-right-from-bracket' onClick={() => logout()}></i></button>
+                </div>
             </div>
             <table className="table bordered mt-4">
                 <thead>
                     <tr>
                         <th scope='col'>ID</th>
                         <th scope='col-2'>Name</th>
+                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -126,6 +142,9 @@ export default function Upload() {
                             </td>
                             <td>
                                 {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleShowUpdate(f)}></i> : ''}
+                            </td>
+                            <td>
+                                <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => deleteFolderFile(f)}></i>
                             </td>
                         </tr>
                     ))}
@@ -154,7 +173,7 @@ export default function Upload() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Modal show={show} onHide={handleClose} animation={false}>
+            <Modal show={showUpdate} onHide={handleCloseUpdate} animation={false}>
                 <Modal.Header>
                     <Modal.Title>Update Folder</Modal.Title>
                 </Modal.Header>
@@ -168,7 +187,7 @@ export default function Upload() {
                     <Button variant='primary' onClick={() => updateFolders()}>
                         Update
                     </Button>
-                    <Button variant='secondary' onClick={() => handleClose()}>
+                    <Button variant='secondary' onClick={() => handleCloseUpdate()}>
                         <i></i> Close
                     </Button>
                 </Modal.Footer>

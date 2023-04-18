@@ -20,13 +20,13 @@ export default function SubFolder() {
     const [showUpload, setShowUpload] = useState(false)
     const handleClosePopupUpload = () => setShowUpload(false)
     const handleShowPopupUpload = () => setShowUpload(true)
+    const [showUpdate, setShowUpdate] = useState(false)
+    const handleCloseUpdate = () => setShowUpdate(false)
 
     const handleShowUpdate = (f) => {
-        console.log(f.name)
         setOldNameFolder(f.name)
         setSubFolderName(f.name)
-        console.log(subFolderName)
-        setShow(true)
+        setShowUpdate(true)
     }
 
 
@@ -58,12 +58,10 @@ export default function SubFolder() {
 
     const updateSubFolder = () => {
         if(subFolderName !== null && subFolderName !== undefined) {
-            updateFolder(oldNameFolder + '/' + subFolderName, nameFolder.name + '/' + subFolderName)
-            console.log(oldNameFolder + '/' + subFolderName)
+            updateFolder(nameFolder.name + '/' +oldNameFolder, nameFolder.name + '/' + subFolderName)
             .then(response => {
                 setOldNameFolder()
-                console.log(subFolderName)
-                setShow(false);
+                setShowUpdate(false);
                 getSubFolder();
             }).catch(error => {
                 console.log(error);
@@ -86,7 +84,12 @@ export default function SubFolder() {
     }
 
     const subFolder = (f) => {
-        window.location.replace(window.location.pathname + '/' + f.name)
+        if (f.isFolder){
+            window.location.replace('/sub_folder/' + f.name)
+            localStorage.setItem("path", f.path)
+        }
+        else
+            window.open(f.path)
     }
 
     const changeNameFolder = (event) => {
@@ -94,7 +97,7 @@ export default function SubFolder() {
     }
 
     const deleteSubFolderFile = (file) => {
-        deleteFolder(file.name) 
+        deleteFolder(file.path) 
         .then(response => {
             getSubFolder();
         })
@@ -113,13 +116,14 @@ export default function SubFolder() {
             <div className="row col-md-12">             
                 <button className='btn btn-primary' onClick={() => handleShow()}><i className='fa fa-plus'></i> Create</button>
                 <button className='btn btn-secondary' style={{ marginLeft: '5px' }} onClick={() => handleShowPopupUpload() }>Upload File</button>
-                <button className='btn btn-danger' style={{ marginLeft: '5px'}}><i className='fa fa-remove'></i> Delete</button>
+                {/* <button className='btn btn-danger' style={{ marginLeft: '5px'}}><i className='fa fa-remove'></i> Delete</button> */}
             </div>
             <table className="table bordered mt-4" >
                 <thead>
                     <tr>
                         <th scope='col'>ID</th>
                         <th scope='col-2'>Name</th>
+                        <th></th>
                         <th></th>
                     </tr>
                 </thead>
@@ -136,6 +140,9 @@ export default function SubFolder() {
                             </td>
                             <td>
                                 {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue'}} onClick={() => handleShowUpdate(f)}></i> : ''}
+                            </td>
+                            <td>
+                                 <i className='fa fa-trash' style={{ color: 'red'}} onClick={() => deleteSubFolderFile(f)}></i>
                             </td>
                         </tr>
                     ))}
@@ -164,7 +171,7 @@ export default function SubFolder() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            {/* <Modal show={show} onHide={handleClose} animation={false}>
+            <Modal show={showUpdate} onHide={handleCloseUpdate} animation={false}>
                 <Modal.Header>
                     <Modal.Title>Update Folder</Modal.Title>
                 </Modal.Header>
@@ -178,11 +185,11 @@ export default function SubFolder() {
                     <Button variant='primary' onClick={() => updateSubFolder()}>
                         Update
                     </Button>
-                    <Button variant='secondary' onClick={() => handleClose()}>
+                    <Button variant='secondary' onClick={() => handleCloseUpdate()}>
                         <i></i> Close
                     </Button>
                 </Modal.Footer>
-            </Modal> */}
+            </Modal>
             <Modal show={showUpload} onHide={handleClosePopupUpload} animation={true}>
                 <Modal.Header>
                     <Modal.Title>Upload File</Modal.Title>

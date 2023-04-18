@@ -147,11 +147,11 @@ export function getListAllUser() {
 }
 
 // Tạo mới tài khoản người dùng
-export function createUser(users) {
+export function createUser(usersName, email, password) {
     var raw = JSON.stringify({
-        "name": users.name,
-        "email": users.email,
-        "password": users.password
+        "name": usersName,
+        "email": email,
+        "password": password
     });
 
     return request({
@@ -172,14 +172,14 @@ export function getUserbyID(user) {
 }
 
 // Cập nhật thông tin người dùng
-export function updateUser(user) {
+export function updateUser(username, email, id) {
     var raw = JSON.stringify({
-        'name': user.name,
-        'email': user.email
+        'name': username,
+        'email': email
     });
 
     return request({
-        url: API_URL_USER + "/" + user.id,
+        url: API_URL_USER + "/" + id,
         method: 'PUT',
         body: raw,
         redirect: 'follow'
