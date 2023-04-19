@@ -12,7 +12,7 @@ function App() {
         <Router>
             <Routes>
                 <Route path='' element={<Login />} />
-                <Route path='admin' element={<LoginAdmin />} />
+                <Route path='admin/login' element={<LoginAdmin />} />
                 <Route path='upload' element={<Upload />} />
                 <Route path='sub_folder/:name' element={<SubFolder />} />
                 <Route path='dashboard' element={<UserManagement />}/>

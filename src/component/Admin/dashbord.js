@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Modal } from 'react-bootstrap';
-import { getListAllUser, createUser, updateUser, getUserbyID, deleteUser } from '../../service/files';
+import { getListAllUser, createUser, updateUser, deleteUser } from '../../service/files';
 
 function UserManagement() {
 
@@ -10,6 +10,7 @@ function UserManagement() {
     const [show, setShow] = useState(false)
     const [showUpdate, setShowUpdate] = useState(false)
     const [showView, setShowView] = useState(false)
+
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
     const handleCloseView = () => setShowView(false)
@@ -23,6 +24,14 @@ function UserManagement() {
     const [password, setPassword] = useState()
     const [id, setId] = useState()
 
+    const [showDelete, setShowDelete] = useState(false)
+    const handleCloseDelete = () => setShowDelete(false)
+
+    const handleShowDelete = (user) => {
+        setShowDelete(true)
+        setId(user.id)
+    }
+
     const handleShowUpdate = (user) => {
         setShowUpdate(true)
         setUserName(user.name)
@@ -31,7 +40,7 @@ function UserManagement() {
     }
 
     useEffect(() => {
-        getData();
+        getData();  
     }, [])
 
     const getData = () => {
@@ -69,9 +78,10 @@ function UserManagement() {
         }
     }
 
-    const deleteUsers = (user) => {
-        deleteUser(user)
+    const deleteUsers = () => {
+            deleteUser(id)
             .then(response => {
+                setShowDelete(false);
                 getData();
             }).catch(error => {
                 console.log(error);
@@ -80,7 +90,7 @@ function UserManagement() {
 
     const logout = () => {
         localStorage.clear()
-        window.location.replace('/')
+        window.location.replace('/admin/login')
     }
 
     return (
@@ -108,10 +118,10 @@ function UserManagement() {
                     {lstUser.map((u, index) => (
                         <tr key={u.id}>
                             <td scope='row'>{index + 1}</td>
-                            <td onClick={() => handleShowView(u)}>{u.name}</td>
-                            <td>{u.email}</td>
-                            <td onClick={() => handleShowUpdate(u)}><i className='fa fa-edit'></i></td>
-                            <td onClick={() => deleteUsers(u)}><i className='fa fa-remove'></i></td>
+                            <td onClick={() => handleShowView(u)} style={{ cursor: 'pointer' }}>{u.name}</td>
+                            <td onClick={() => handleShowView(u)} style={{ cursor: 'pointer' }}>{u.email}</td>
+                            <td onClick={() => handleShowUpdate(u)}><i className='fa fa-edit' style={{ color: 'blue', cursor: 'pointer' }}></i></td>
+                            <td onClick={() => handleShowDelete(u)}><i className='fa fa-remove' style={{ color: 'red', cursor: 'pointer' }}></i></td>
                         </tr>
                     ))}
                 </tbody>
@@ -171,27 +181,66 @@ function UserManagement() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <Modal show={showDelete} onHide={handleCloseDelete} animation={false}>
+                <Modal.Header>
+                    <Modal.Title>Delete User</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h2>Are you sure you want to delete?</h2>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button style={{ backgroundColor: 'red' }} onClick={() => deleteUsers()}>
+                        <i className='fa fa-remove'></i>{" "} Delete
+                    </Button>
+                    <Button variant="secondary" onClick={() => handleCloseDelete()}>
+                        <i className='fa fa-close'></i>{" "}Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Modal show={showView} onHide={handleCloseView} animation={false}>
                 <Modal.Header>
                     <Modal.Title>View user</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="form-group">
-                        <label>Username: {users.name}</label>
+                    <div className='row'>
+                        <div className='col-3'>
+                            Username:
+                        </div>
+                        <div className='col-3'>
+                            {users.name}
+                        </div>
                     </div>
-                    <div className="form-group">
-                        <label>Email: {users.email}</label>
+                    <hr></hr>
+                    <div className='row'>
+                        <div className='col-3'>
+                            Email:
+                        </div>
+                        <div className='col-3'>
+                            {users.email}
+                        </div>
                     </div>
-                    <div className="form-group">
-                        <label>Gender: {users.gender}</label>
+                    <hr></hr>
+                    <div className='row'>
+                        <div className='col-3'>
+                            Gender:
+                        </div>
+                        <div className='col-3'>
+                            {users.gender}
+                        </div>
                     </div>
-                    <div className="form-group">
-                        <label>Phone: {users.phone}</label>
+                    <hr></hr>
+                    <div className='row'>
+                        <div className='col-3'>
+                            Phone:
+                        </div>
+                        <div className='col-3'>
+                            {users.phone}
+                        </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleCloseView()}>
-                        <i className='fa fa-close'></i>Close
+                    <Button variant="secondary" onClick={() => handleCloseView()} style={{ backgroundColor: 'red' }}>
+                        <i className='fa fa-close'></i>{" "}Close
                     </Button>
                 </Modal.Footer>
             </Modal>

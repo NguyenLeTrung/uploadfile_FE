@@ -29,6 +29,15 @@ export default function Upload() {
         setShowUpdate(true)
     }
 
+    const [showDelete, setShowDelete] = useState(false)
+
+    const handleCloseDelete = () => setShowDelete(false)
+
+    const handleShowDelete = (name) => {
+        setShowDelete(true)
+        setPaths(name.path)
+    }
+
     const getData = () => {
         let promise;
         promise = getListpath("");
@@ -94,14 +103,16 @@ export default function Upload() {
     }
 
 
-    const deleteFolderFile = (file) => {
-        deleteFolder(file.path)
-            .then(response => {
-                getData();
-            })
-            .catch(error => {
-                console.log(error);
-            }).finally(getData());
+    const deleteFolderFile = () => {
+        console.log(paths)
+        deleteFolder(paths)
+        .then(response => {
+            setShowDelete(false);
+            getData();
+        })
+        .catch(error => {
+            console.log(error);
+        }).finally(getData());
     }
 
     const logout = () => {
@@ -145,7 +156,7 @@ export default function Upload() {
                                 {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleShowUpdate(f)}></i> : ''}
                             </td>
                             <td>
-                                <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => deleteFolderFile(f)}></i>
+                                <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleShowDelete(f)}></i>
                             </td>
                         </tr>
                     )): <tr></tr>}
@@ -190,6 +201,22 @@ export default function Upload() {
                     </Button>
                     <Button variant='secondary' onClick={() => handleCloseUpdate()}>
                         <i></i> Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showDelete} onHide={handleCloseDelete} animation={false}>
+                <Modal.Header>
+                    <Modal.Title>Delete</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h2>Are you sure you want to delete?</h2>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button style={{ backgroundColor: 'red' }} onClick={() => deleteFolderFile()}>
+                        <i className='fa fa-remove'></i>{" "} Delete
+                    </Button>
+                    <Button variant="secondary" onClick={() => handleCloseDelete()}>
+                        <i className='fa fa-close'></i>{" "}Close
                     </Button>
                 </Modal.Footer>
             </Modal>

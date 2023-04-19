@@ -1,6 +1,8 @@
 import { React, useState } from "react";
 import '../../access/main.css'
 import axios from "axios";
+import { API_URL } from "../../service/config";
+import { API_LOCALHOST } from "../../service/config";
 
 
 function LoginAdmin() {
@@ -9,7 +11,7 @@ function LoginAdmin() {
 
     const handleLogin = async (e) => {
         e.preventDefault()
-        await axios.post(`http://113.177.27.200:3010/v1/auth/login-password`, 
+        await axios.post(`${API_URL}auth/login-password`, 
         {
             email: email,
             password: password    
@@ -25,7 +27,7 @@ function LoginAdmin() {
 
         const users = JSON.parse(localStorage.getItem("usertoken"))
         if (users.service === 'staff') {
-            window.location.replace("http://localhost:3000/dashboard")
+            window.location.replace(`${API_LOCALHOST}dashboard`)
             setTimeout(function() {
                 window.location.reload();
             }, 1000)
@@ -36,23 +38,29 @@ function LoginAdmin() {
         <>
             <div className="container wrapper fadeInDown">
                 <div id="formContent">
+                    <h2>Login Admin</h2>
                     <form onSubmit={handleLogin}>
-                        <input 
-                            type="email"
-                            id="login"
-                            className="fadeIn third"
-                            placeholder="Email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                        />
-                        <input 
-                            type="password" 
-                            id="login" 
-                            className="fadeIn fouth" 
-                            placeholder="Password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                        />
+                        <div className="form group fadeIn third">
+                            <label>Email</label>
+                            <input 
+                                type="email"
+                                id="login"
+                                placeholder="Email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <br></br>         
+                        <div className="form group fadeIn fouth">
+                            <label>Password</label>
+                            <input 
+                                type="password"
+                                id="login"
+                                placeholder="Password"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                            />
+                        </div>
                         <input type="submit" className="fadeIn fourth" value="Log In" />
                     </form>
                 </div>
