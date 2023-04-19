@@ -2,8 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { Modal } from 'react-bootstrap';
 import { getListAllUser, createUser, updateUser, deleteUser } from '../../service/files';
+import { API_LOCALHOST } from '../../service/config';
 
 function UserManagement() {
+
+    const userLogin = JSON.parse(localStorage.getItem("usertoken"))
+    if (!userLogin) {
+        window.location.replace(`${API_LOCALHOST}admin/login`)
+    }
 
     const [users, setUsers] = useState({})
     const [lstUser, setLstUser] = useState([])
@@ -40,7 +46,11 @@ function UserManagement() {
     }
 
     useEffect(() => {
-        getData();  
+        const userLogin = JSON.parse(localStorage.getItem("usertoken"))
+        if (!userLogin) {
+            window.location.replace(`${API_LOCALHOST}admin/login`)
+        }
+        getData();
     }, [])
 
     const getData = () => {
@@ -79,7 +89,7 @@ function UserManagement() {
     }
 
     const deleteUsers = () => {
-            deleteUser(id)
+        deleteUser(id)
             .then(response => {
                 setShowDelete(false);
                 getData();
@@ -101,7 +111,7 @@ function UserManagement() {
                     <button className='btn btn-success' onClick={() => handleShow()}><i className='fa fa-plus'></i> Add User</button>
                 </div>
                 <div className='col-md-4' style={{ textAlign: 'right' }}>
-                    <button className='btn'  onClick={() => logout()}><i className='fa-solid fa-right-from-bracket'></i></button>
+                    <button className='btn' onClick={() => logout()}><i className='fa-solid fa-right-from-bracket'></i></button>
                 </div>
             </div>
             <table className="table bordered mt-4">

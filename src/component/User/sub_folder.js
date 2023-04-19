@@ -4,6 +4,7 @@ import { createFolder, deleteFolder, getListpath, updateFolder, uploadFile } fro
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { API_LOCALHOST } from '../../service/config';
 export default function SubFolder() {
 
     const nameFolder = useParams();
@@ -31,7 +32,9 @@ export default function SubFolder() {
 
     const getSubFolder = () => {
         const link = localStorage.getItem("path")
-        const path = link.substring((link.indexOf('/9/') + 2), link.length)
+        let users = JSON.parse(localStorage.getItem('usertoken'));
+        console.log(users.id.toString().length)
+        const path = link.substring((link.indexOf('/' + users.id + '/') + ((users.id).toString().length + 1)), link.length)
         setPaths(path)
         getListpath(path)
             .then(response => {
@@ -42,6 +45,10 @@ export default function SubFolder() {
     }
 
     useEffect(() => {
+        const userLogin = JSON.parse(localStorage.getItem("usertoken"))
+        if (!userLogin){
+            window.location.replace(`${API_LOCALHOST}`)
+        }
         setPaths(localStorage.getItem("path"))
         getSubFolder();
     }, [])
@@ -114,10 +121,11 @@ export default function SubFolder() {
         const link = localStorage.getItem("path")
         const path = link.substring(link.lastIndexOf('/'), -1)
         const a = path.substring(path.lastIndexOf("/") + 1, path.length)
-        let users = JSON.parse(localStorage.getItem('usertoken'));
-        console.log(link)
         console.log(path)
-        if (path === 'http://113.177.27.200:3010/' + users.id) {
+        console.log(a)
+        console.log(link)
+        let users = JSON.parse(localStorage.getItem('usertoken'));
+        if (path === 'http://cdn.juliesandlauglobal.com/' + users.id) {
             navigate('/upload')
         } else {
             localStorage.setItem("path", path)
@@ -129,6 +137,10 @@ export default function SubFolder() {
     const logout = () => {
         localStorage.clear()
         window.location.replace('/')
+    }
+
+    const dowloadFile = (f) => {
+        window.open(f.path)
     }
 
     return (
@@ -165,6 +177,9 @@ export default function SubFolder() {
                             </td>
                             <td>
                                 {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue' }} onClick={() => handleShowUpdate(f)}></i> : ''}
+                            </td>
+                            <td>
+                                {f.isFolder === false ? <i className='fa fa-download' style={{ color: 'green', cursor: 'pointer' }} onClick={() => dowloadFile(f)}></i> : ''}
                             </td>
                             <td>
                                 <i className='fa fa-trash' style={{ color: 'red' }} onClick={() => deleteSubFolderFile(f)}></i>

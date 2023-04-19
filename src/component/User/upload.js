@@ -3,6 +3,7 @@ import { createFolder, getListpath, uploadFile, updateFolder, deleteFolder } fro
 import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { API_LOCALHOST } from '../../service/config';
 
 export default function Upload() {
 
@@ -51,6 +52,10 @@ export default function Upload() {
     }
 
     useEffect(() => {
+        const userLogin = JSON.parse(localStorage.getItem("usertoken"))
+        if (!userLogin) {
+            window.location.replace(`${API_LOCALHOST}`)
+        }
         getData();
     }, [])
 
@@ -106,13 +111,13 @@ export default function Upload() {
     const deleteFolderFile = () => {
         console.log(paths)
         deleteFolder(paths)
-        .then(response => {
-            setShowDelete(false);
-            getData();
-        })
-        .catch(error => {
-            console.log(error);
-        }).finally(getData());
+            .then(response => {
+                setShowDelete(false);
+                getData();
+            })
+            .catch(error => {
+                console.log(error);
+            }).finally(getData());
     }
 
     const logout = () => {
@@ -120,6 +125,9 @@ export default function Upload() {
         window.location.replace('/')
     }
 
+    const dowloadFile = (f) => {
+        window.open(f.path)
+    }
     return (
         <div className='container'>
             <h2>Folder</h2>
@@ -139,6 +147,7 @@ export default function Upload() {
                         <th scope='col-2'>Name</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -156,10 +165,13 @@ export default function Upload() {
                                 {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleShowUpdate(f)}></i> : ''}
                             </td>
                             <td>
+                                {f.isFolder === false ? <i className='fa fa-download' style={{ color: 'green', cursor: 'pointer' }} onClick={() => dowloadFile(f)}></i> : ''}
+                            </td>
+                            <td>
                                 <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleShowDelete(f)}></i>
                             </td>
                         </tr>
-                    )): <tr></tr>}
+                    )) : <tr></tr>}
                 </tbody>
             </table>
             <div className='row col-md-auto'>
