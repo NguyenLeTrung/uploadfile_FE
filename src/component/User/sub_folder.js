@@ -116,11 +116,13 @@ export default function SubFolder() {
         const path = link.substring(link.lastIndexOf('/'), -1)
         const a = path.substring(path.lastIndexOf("/") + 1, path.length)
         let users = JSON.parse(localStorage.getItem('usertoken'));
-        if (!path === 'http://113.177.27.200:3010/' + users.id) {
+        console.log(link)
+        console.log(path)
+        if (path === 'http://113.177.27.200:3010/' + users.id) {
+            navigate('/upload')
+        } else {
             localStorage.setItem("path", path)
             window.location.replace('/sub_folder/' + a)
-        } else {
-            navigate('/upload')
         }
         // history.goBack()
     }
