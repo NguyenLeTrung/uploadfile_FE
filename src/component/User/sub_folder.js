@@ -29,9 +29,6 @@ export default function SubFolder() {
         setShowUpdate(true)
     }
 
-    const [showDelete, setShowDelete] = useState(false)
-    const handleCloseDelete = () => setShowDelete(false)
-
     const getSubFolder = () => {
         const link = localStorage.getItem("path")
         const path = link.substring((link.indexOf('/9/') + 2), link.length)
