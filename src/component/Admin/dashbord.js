@@ -78,11 +78,21 @@ function UserManagement() {
             })
     }
 
+    const logout = () => {
+        localStorage.clear()
+        window.location.replace('/')
+    }
+
     return (
         <div className='container'>
             <h2>Manage User</h2>
             <div className='row col-md-auto'>
-                <button className='btn btn-success' onClick={() => handleShow()}><i className='fa fa-plus'></i> Add User</button>
+                <div className='col-md-8'>
+                    <button className='btn btn-success' onClick={() => handleShow()}><i className='fa fa-plus'></i> Add User</button>
+                </div>
+                <div className='col-md-4' style={{ textAlign: 'right' }}>
+                    <button className='btn'  onClick={() => logout()}><i className='fa-solid fa-right-from-bracket'></i></button>
+                </div>
             </div>
             <table className="table bordered mt-4">
                 <thead>

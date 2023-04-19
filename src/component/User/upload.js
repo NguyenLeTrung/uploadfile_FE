@@ -36,6 +36,7 @@ export default function Upload() {
             .then(response => {
                 setName(response.data)
             }).catch(error => {
+                setName([])
                 console.log(error);
             })
     }
@@ -130,7 +131,7 @@ export default function Upload() {
                     </tr>
                 </thead>
                 <tbody>
-                    {name.map((f, index) => (
+                    {name ? name.map((f, index) => (
                         <tr key={f.id}>
                             <td scope='row'>{index + 1}</td>
                             <td scope='row'
@@ -147,7 +148,7 @@ export default function Upload() {
                                 <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => deleteFolderFile(f)}></i>
                             </td>
                         </tr>
-                    ))}
+                    )): <tr></tr>}
                 </tbody>
             </table>
             <div className='row col-md-auto'>
