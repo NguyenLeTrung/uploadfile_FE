@@ -80,7 +80,7 @@ function UserManagement() {
 
     const logout = () => {
         localStorage.clear()
-        window.location.replace('/')
+        window.location.replace('/admin/login')
     }
 
     return (
