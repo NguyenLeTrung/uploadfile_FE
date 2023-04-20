@@ -136,10 +136,6 @@ function UserManagement() {
                     ))}
                 </tbody>
             </table>
-            <div className='row col-md-auto'>
-                <button className='btn btn-primary' style={{ marginRight: '5px' }} onClick={() => window.history.back()}>
-                    <i className="fa-solid fa-arrow-left"></i> Back</button>
-            </div>
 
             <Modal show={show} onHide={handleClose} animation={false}>
                 <Modal.Header>

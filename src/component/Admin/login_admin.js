@@ -48,6 +48,7 @@ function LoginAdmin() {
                                 placeholder="Email"
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
+                                required
                             />
                         </div>
                         <br></br>         
@@ -59,6 +60,7 @@ function LoginAdmin() {
                                 placeholder="Password"
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
+                                required
                             />
                         </div>
                         <input type="submit" className="fadeIn fourth" value="Log In" />

@@ -125,7 +125,7 @@ input[type=email] {
   border: none;
   color: #0d0d0d;
   padding: 15px 32px;
-  text-align: center;
+  text-align: left;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
@@ -296,4 +296,10 @@ input[type=email]::placeholder {
 
 #icon {
   width: 60%;
+}
+
+label {
+  margin-right: 300px;
+  font-size: 18px;
+  font-weight: 500;
 }

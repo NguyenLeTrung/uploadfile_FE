@@ -1,1 +1,3 @@
-export const API_URL = "http://113.177.27.200:3010/v1/";
+export const API_URL = "https://api.juliesandlauglobal.com/v1/";
+export const PATH_URL ='https://api.juliesandlauglobal.com/'
+export const API_LOCALHOST = "https://juliesandlauglobal.com/"

@@ -30,6 +30,14 @@ export default function SubFolder() {
         setShowUpdate(true)
     }
 
+    const [showDelete, setShowDelete] = useState(false)
+    const handleCloseDelete = () => setShowDelete(false)
+
+    const handleShowDelete = (name) => {
+        setShowDelete(true)
+        setPaths(name.path)
+    }
+
     const getSubFolder = () => {
         const link = localStorage.getItem("path")
         let users = JSON.parse(localStorage.getItem('usertoken'));
@@ -83,7 +91,6 @@ export default function SubFolder() {
     const uploadFiles = () => {
         let users = JSON.parse(localStorage.getItem('usertoken'))
         const a = window.location.pathname;
-        // const path = a.substring(12, a.length)
         uploadFile(fileUpload, paths)
             .then(response => {
                 getSubFolder();
@@ -107,9 +114,10 @@ export default function SubFolder() {
         setSubFolderName(event.target.value)
     }
 
-    const deleteSubFolderFile = (file) => {
-        deleteFolder(file.path)
+    const deleteSubFolderFile = () => {
+        deleteFolder(paths)
             .then(response => {
+                setShowDelete(false);
                 getSubFolder();
             })
             .catch(error => {
@@ -124,14 +132,15 @@ export default function SubFolder() {
         console.log(path)
         console.log(a)
         console.log(link)
+        
         let users = JSON.parse(localStorage.getItem('usertoken'));
-        if (path === 'http://cdn.juliesandlauglobal.com/' + users.id) {
-            navigate('/upload')
-        } else {
-            localStorage.setItem("path", path)
-            window.location.replace('/sub_folder/' + a)
-        }
-        // history.goBack()
+        console.log(API_LOCALHOST + users.id)
+        // if (path === 'http://cdn.juliesandlauglobal.com' + users.id) { 
+        //     navigate('/upload')
+        // } else {
+        //     localStorage.setItem("path", path)
+        //     window.location.replace('/sub_folder/' + a)
+        // }
     }
 
     const logout = () => {
@@ -176,13 +185,13 @@ export default function SubFolder() {
                                 {" "}{f.name}
                             </td>
                             <td>
-                                {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue' }} onClick={() => handleShowUpdate(f)}></i> : ''}
+                                {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue', cursor: "pointer" }} onClick={() => handleShowUpdate(f)}></i> : ''}
                             </td>
                             <td>
                                 {f.isFolder === false ? <i className='fa fa-download' style={{ color: 'green', cursor: 'pointer' }} onClick={() => dowloadFile(f)}></i> : ''}
                             </td>
                             <td>
-                                <i className='fa fa-trash' style={{ color: 'red' }} onClick={() => deleteSubFolderFile(f)}></i>
+                                <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleShowDelete(f)}></i>
                             </td>
                         </tr>
                     ))}
@@ -227,6 +236,22 @@ export default function SubFolder() {
                     </Button>
                     <Button variant='secondary' onClick={() => handleCloseUpdate()}>
                         <i></i> Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showDelete} onHide={handleCloseDelete} animation={false}>
+                <Modal.Header>
+                    <Modal.Title>Delete</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <h2>Are you sure you want to delete?</h2>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button style={{ backgroundColor: 'red' }} onClick={() => deleteSubFolderFile()}>
+                        <i className='fa fa-remove'></i>{" "} Delete
+                    </Button>
+                    <Button variant="secondary" onClick={() => handleCloseDelete()}>
+                        <i className='fa fa-close'></i>{" "}Close
                     </Button>
                 </Modal.Footer>
             </Modal>

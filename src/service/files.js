@@ -1,4 +1,5 @@
 import { API_URL } from "./config";
+import { PATH_URL } from "./config";
 
 const API_URL_USER = API_URL + "users"
 
@@ -120,8 +121,8 @@ export function deleteFolder(path) {
 export function updateFolder(oldPath, newPath) {
     let users = JSON.parse(localStorage.getItem('usertoken'))
     var raw = JSON.stringify({
-        oldPath: 'http://113.177.27.200:3010/' + users.id + '/' + oldPath,
-        newPath: 'http://113.177.27.200:3010/' + users.id + '/' + newPath,
+        oldPath: PATH_URL + users.id + '/' + oldPath,
+        newPath: PATH_URL + users.id + '/' + newPath,
     })
 
     console.log(oldPath)
@@ -140,7 +141,7 @@ export function updateFolder(oldPath, newPath) {
 // Hiển thị danh sách người dùng
 export function getListAllUser() {
     return request({
-        url: API_URL_USER,
+        url: API_URL_USER ,
         method: 'GET',
         redirect: 'follow'
     });

@@ -3,6 +3,7 @@ import '../../access/main.css'
 import axios from "axios";
 import { API_URL } from "../../service/config";
 import { API_LOCALHOST } from "../../service/config";
+import "../../access/image/logo_icon.png"
 
 function Login() {
     const [email, setEmail] = useState('')
