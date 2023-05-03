@@ -39,12 +39,22 @@ export default function Upload() {
         setPaths(name.path)
     }
 
+    const [checkAll, setCheckAll] = useState(false)
+
     const getData = () => {
         let promise;
         promise = getListpath("");
         promise
             .then(response => {
-                setName(response.data)
+                let list = [];
+                console.log(response)
+                response.data.forEach(item => {
+                    let customItem = {};
+                    customItem = { ...item, check: false }
+                    list = [...list, customItem];
+                });
+                setName(list)
+                console.log(list)
             }).catch(error => {
                 setName([])
                 console.log(error);
@@ -84,14 +94,16 @@ export default function Upload() {
     }
 
     const uploadFiles = () => {
-        uploadFile(fileUpload, '')
-            .then(response => {
-                setShowUpload(false);
-                getData();
-            })
-            .catch(error => {
-                console.log(error);
-            }).finally(getData());
+        console.log(fileUpload);
+        console.log(typeof fileUpload)
+        // uploadFile(fileUpload, '')
+        //     .then(response => {
+        //         setShowUpload(false);
+        //         getData();
+        //     })
+        //     .catch(error => {
+        //         console.log(error);
+        //     }).finally(getData());
     }
 
     const subFolder = (f) => {
@@ -128,6 +140,28 @@ export default function Upload() {
     const dowloadFile = (f) => {
         window.open(f.path)
     }
+
+    const onChangeCheckAll = () => {
+        console.log(checkAll === false)
+        checkAll === false ? setCheckAll(true) : setCheckAll(false)
+        console.log(checkAll)
+        let list = [];
+        if (!checkAll) {
+            name.forEach(item => {
+                let customItem = {};
+                customItem = { ...item, check: true }
+                list = [...list, customItem];
+            });
+        }else{
+            name.forEach(item => {
+                let customItem = {};
+                customItem = { ...item, check: false }
+                list = [...list, customItem];
+            });
+        }
+        console.log(list)
+        setName(list)
+    }
     return (
         <div className='container'>
             <h2>Folder</h2>
@@ -143,6 +177,7 @@ export default function Upload() {
             <table className="table bordered mt-4">
                 <thead>
                     <tr>
+                        <th><input type='checkbox' onClick={() => onChangeCheckAll()} value={checkAll}></input></th>
                         <th scope='col'>ID</th>
                         <th scope='col-2'>Name</th>
                         <th></th>
@@ -153,6 +188,7 @@ export default function Upload() {
                 <tbody>
                     {name ? name.map((f, index) => (
                         <tr key={f.id}>
+                            <td><input type='checkbox' value={f.check} name={index} id={index} checked={f.check} /></td>
                             <td scope='row'>{index + 1}</td>
                             <td scope='row'
                                 onDoubleClick={() => subFolder(f)}
