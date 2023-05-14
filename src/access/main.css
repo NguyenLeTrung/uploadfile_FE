@@ -355,3 +355,9 @@ input:valid~span {
 span i.hide-btn::before {
     content: "f070";
 }
+
+label {
+  margin-right: 300px;
+  font-size: 18px;
+  font-weight: 500;
+}

@@ -60,7 +60,7 @@ export function getListpath(path) {
     })
 
     return request({
-        url: API_URL + 'paths',
+        url: API_URL + 'v1/' +'paths',
         body: raw,
         method: 'POST',
         redirect: 'follow'
@@ -76,7 +76,7 @@ export function createFolder(name, path) {
     })
 
     return request({
-        url: API_URL + 'paths/create',
+        url: API_URL + 'v1/' + 'paths/create',
         method: 'POST',
         body: raw,
         redirect: 'follow'
@@ -170,12 +170,17 @@ export function forceDownload(path) {
 export function updateFolder(oldPath, newPath) {
     let users = JSON.parse(localStorage.getItem('usertoken'))
     var raw = JSON.stringify({
+<<<<<<< .mine
         oldPath: PATH_URL + users.id + '/' + oldPath,
         newPath: PATH_URL + users.id + '/' + newPath,
+=======
+        oldPath: API_URL + users.id + '/' + oldPath,
+        newPath: API_URL + users.id + '/' + newPath,
+>>>>>>> .theirs
     })
     
     return request({
-        url: API_URL + 'paths/update',
+        url: API_URL + 'v1/' + 'paths/update',
         method: 'PUT',
         body: raw,
         redirect: 'follow',

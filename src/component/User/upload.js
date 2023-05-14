@@ -41,6 +41,7 @@ export default function Upload() {
         setPaths(names)
     }
 
+<<<<<<< HEAD
     const [showDeleteAll, setShowDeleteAll] = useState(false)
     const handleCloseDeleteAll = () => setShowDeleteAll(false)
     const handleShowDeleteAll = (names) => {
@@ -59,12 +60,28 @@ export default function Upload() {
 
 
     // Get list Data
+=======
+    const [checkAll, setCheckAll] = useState(false)
+
+>>>>>>> ba9978e59fb40e27499a8f079a135cd52c51a8e2
     const getData = () => {
         let promise;
         promise = getListpath("");
         promise
             .then(response => {
+<<<<<<< HEAD
                 setNames(response.data)
+=======
+                let list = [];
+                console.log(response)
+                response.data.forEach(item => {
+                    let customItem = {};
+                    customItem = { ...item, check: false }
+                    list = [...list, customItem];
+                });
+                setName(list)
+                console.log(list)
+>>>>>>> ba9978e59fb40e27499a8f079a135cd52c51a8e2
             }).catch(error => {
                 setNames([])
                 console.log(error);
@@ -113,6 +130,7 @@ export default function Upload() {
 
     // Upload File
     const uploadFiles = () => {
+<<<<<<< HEAD
         setIsUpload(true)
         if (!isUpload) {
             uploadFile(fileUpload, '')
@@ -149,6 +167,18 @@ export default function Upload() {
 
     const chooseUploadFile = (e) => {
         setFileUploads(e.target.files)
+=======
+        console.log(fileUpload);
+        console.log(typeof fileUpload)
+        // uploadFile(fileUpload, '')
+        //     .then(response => {
+        //         setShowUpload(false);
+        //         getData();
+        //     })
+        //     .catch(error => {
+        //         console.log(error);
+        //     }).finally(getData());
+>>>>>>> ba9978e59fb40e27499a8f079a135cd52c51a8e2
     }
 
     const subFolder = (f) => {
@@ -274,6 +304,7 @@ export default function Upload() {
             setNames(tempItem);
         }
     }
+<<<<<<< HEAD
     // Delete all 
     const handleDeleteAll = () => {
 
@@ -316,6 +347,30 @@ export default function Upload() {
         setNewPassword(event.target.value)
     }
 
+=======
+
+    const onChangeCheckAll = () => {
+        console.log(checkAll === false)
+        checkAll === false ? setCheckAll(true) : setCheckAll(false)
+        console.log(checkAll)
+        let list = [];
+        if (!checkAll) {
+            name.forEach(item => {
+                let customItem = {};
+                customItem = { ...item, check: true }
+                list = [...list, customItem];
+            });
+        }else{
+            name.forEach(item => {
+                let customItem = {};
+                customItem = { ...item, check: false }
+                list = [...list, customItem];
+            });
+        }
+        console.log(list)
+        setName(list)
+    }
+>>>>>>> ba9978e59fb40e27499a8f079a135cd52c51a8e2
     return (
         <>
             <div className='container' style={{ minHeight: '100vh' }}>
@@ -357,6 +412,7 @@ export default function Upload() {
                         <button className='btn btn-secondary' onClick={() => logout()}>Sign out {" "}<i className='fa-solid fa-right-from-bracket'></i></button>
                     </div>
                 </div>
+<<<<<<< HEAD
                 <table className="table bordered mt-4">
                     <thead>
                         <tr>
@@ -374,6 +430,44 @@ export default function Upload() {
                             <th></th>
                             <th></th>
                             <th></th>
+=======
+                <div className='col-md-4' style={{ textAlign: 'right' }}>
+                    <button className='btn'><i className='fa-solid fa-right-from-bracket' onClick={() => logout()}></i></button>
+                </div>
+            </div>
+            <table className="table bordered mt-4">
+                <thead>
+                    <tr>
+                        <th><input type='checkbox' onClick={() => onChangeCheckAll()} value={checkAll}></input></th>
+                        <th scope='col'>ID</th>
+                        <th scope='col-2'>Name</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {name ? name.map((f, index) => (
+                        <tr key={f.id}>
+                            <td><input type='checkbox' value={f.check} name={index} id={index} checked={f.check} /></td>
+                            <td scope='row'>{index + 1}</td>
+                            <td scope='row'
+                                onDoubleClick={() => subFolder(f)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                {f.isFolder === true ? <i className='fa-regular fa-folder'></i> : <i className='fa fa-paperclip'></i>}
+                                {" "}{f.name}
+                            </td>
+                            <td>
+                                {f.isFolder === true ? <i className='fa fa-edit' style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleShowUpdate(f)}></i> : ''}
+                            </td>
+                            <td>
+                                {f.isFolder === false ? <i className='fa fa-download' style={{ color: 'green', cursor: 'pointer' }} onClick={() => dowloadFile(f)}></i> : ''}
+                            </td>
+                            <td>
+                                <i className='fa fa-trash' style={{ color: 'red', cursor: 'pointer' }} onClick={() => handleShowDelete(f)}></i>
+                            </td>
+>>>>>>> ba9978e59fb40e27499a8f079a135cd52c51a8e2
                         </tr>
                     </thead>
                     <tbody>
